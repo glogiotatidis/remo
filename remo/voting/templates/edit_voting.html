@@ -51,48 +51,48 @@
           {{ field_errors(poll_form.description) }}
 
           <!-- Poll range voting -->
-          <div id="pollrangeformset">
-            {% for poll_range in poll_range_formset.forms %}
-              <div class="row {% if loop.last %} pollrangeblock {% endif %}"
-                   {% if loop.last %}
-                     data-pollRangePrefix={{ poll_range.prefix }}
-                   {% endif %}
-                   id="{{ poll_range.prefix }}-row">
-                {{ field_with_attrs(poll_range.name,
+          <div class="formset" data-prefix="{{ poll_range_formset.prefix }}">
+            {% for poll_range_form in poll_range_formset %}
+                {{ poll_range_form.id }}
+              <div class="row copyblock">
+                {{ field_with_attrs(poll_range_form.name,
                                     placeholder='Range Poll Name',
                                     title='Range Poll Name',
                                     class='input-text big has-tip tip-right') }}
+                {{ field_errors(poll_range_form.name) }}
                 <div class="required-field"></div>
-                <p class="more-info">Create at least one range poll.</p>
-                {{ field_errors(poll_range.name) }}
-                {% if poll_range.nested %}
-                  {% for formset in poll_range.nested %}
-                    <div class="pollrangevotesblock"
-                         data-nominee={{ formset.prefix }}>
-                      {{ formset.management_form }}
-                      {% for form in formset.forms %}
-                        {{ form.id }}
-                        {{ form.nominee }}
-                        {% if loop.first %}
-                          <div class="required-field"></div>
-                        {% endif %}
-                      {% endfor %}
+
+
+                {% if poll_range_form.nested %}
+                  <div class="formset" data-prefix="{{ poll_range_form.nested[0].prefix }}">
+                    {% for nominee_form in poll_range_form.nested[0] %}
+                      {{ nominee_form.id }}
+                      <div class="row copyblock">
+                      {{ nominee_form.nominee }}
+                      </div>
+                    {% endfor %}
+                    <div class="align-left">
+                      <a class="voting-add-nominee-button" href="#"
+                         class="small white button nice radius">Add Nominee
+                      </a>
                     </div>
-                  {% endfor %}
-                  <div class="align-left">
-                    <a id="voting-add-poll-range-votes-button" href="#"
-                       class="small white button nice radius">Add Nominee
-                    </a>
-                    <a id="voting-delete-poll-range-votes-button" href="#" 
-                       class="small white button nice radius">Delete Nominee
-                    </a>
-                 </div>
+                  </div>
+                  {{ poll_range_form.nested[0].management_form }}
                 {% endif %}
-                </br>
               </div>
             {% endfor %}
+            <div class="align-left">
+              <a class="voting-add-pollrange-button" href="#"
+                 class="small white button nice radius">Add Poll Range
+              </a>
+            </div>
           </div>
           {{ poll_range_formset.management_form }}
+
+
+
+
+
 
           <!-- Poll radio voting -->
           <div id="pollradioformset">
@@ -230,7 +230,7 @@
               {{ field_errors(poll_form.end_form) }}
             </div>
           </div>
-          
+
           <!-- Eligible groups -->
           <div class="has-tip tip-right" title="Eligiamte Group">
             {{ poll_form.valid_groups }}

@@ -46,8 +46,9 @@ def edit_voting(request, slug=None):
     else:
         can_delete_voting = True
 
-    if (poll_form.is_valid() and poll_range_formset.is_valid()
-            and poll_radio_formset.is_valid()):
+    if (request.method == 'POST'
+        and poll_form.is_valid() and poll_range_formset.is_valid()
+        and poll_radio_formset.is_valid()):
         poll_form.save()
         poll_range_formset.save_all()
         #poll_radio_formset.save_all()

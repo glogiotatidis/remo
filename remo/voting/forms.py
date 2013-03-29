@@ -104,14 +104,13 @@ class BasePollRangeInlineFormSet(BaseInlineFormSet):
             pk_value = instance.pk
         except IndexError:
             instance = None
-            pk_value = hash(form.prefix)
+            pk_value = form.prefix
 
         data = self.data if self.data and index is not None else None
         # store the formset in the .nested property
-        import pdb; pdb.set_trace()
-        form.nested = [PollRangeVotesFormset(
-            data=data, instance=instance,
-            prefix='RANGE_VOTES_%s' % pk_value)]
+        form.nested = [
+            PollRangeVotesFormset(data=data, instance=instance,
+                                  prefix='%s_range_votes' % pk_value)]
 
     def is_valid(self):
         result = super(BasePollRangeInlineFormSet, self).is_valid()

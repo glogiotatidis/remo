@@ -42,7 +42,7 @@
               {% for poll in current_polls %}
                 <tr>
                   <td>
-                    <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                    <a href="{{ url('voting_edit_voting', slug=poll.slug) }}">
                       {{ poll.name }}
                     </a>
                   </td>
@@ -89,7 +89,7 @@
               {% for poll in future_polls %}
                 <tr>
                   <td>
-                    <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                    <a href="{{ url('voting_edit_voting', slug=poll.slug) }}">
                       {{ poll.name }}
                     </a>
                   </td>

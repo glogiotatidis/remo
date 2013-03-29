@@ -1,89 +1,70 @@
 $(document).ready(function() {
-    //Code adapted from http://djangosnippets.org/snippets/1389/
-    function updateElementIndex(el, prefix, ndx) {
-        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
-        var replacement = prefix + '-' + ndx + '-';
-        if ($(el).attr('for')) 
-            $(el).attr('for', $(el).attr('for').replace(id_regex, replacement));
-        if (el.id)
-            el.id = el.id.replace(id_regex, replacement);
-        if (el.name)
-            el.name = el.name.replace(id_regex, replacement);
-
-    }
-
-    //Add formsets
-    function addNestedForm(btn, classId, dataId) {
-        var prefix = $('.' + classId).data(dataId);
-        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val(), 10);
-
-        var row = $('.' + classId + ':first').clone(true).get(0);
-        $('#id_' + prefix + '-TOTAL_FORMS', row).remove();
-        $('#id_' + prefix + '-INITIAL_FORMS', row).remove();
-        $('#id_' + prefix + '-MAX_NUM_FORMS', row).remove();
-        // Insert it after the last form
-        $(row).removeAttr('id').hide().insertAfter('.' + classId + ':last').slideDown(300);
-
-        // Remove error messages
-        $('.errorlist', row).remove();
-        $(row).children().removeClass('error');
-
-        $(row).children().each(function() {
-            updateElementIndex(this, prefix, formCount);
-            $(this).val('');
-         });
-
-        // Update total form count
-        $('#id_' + prefix + '-TOTAL_FORMS').val(parseInt(formCount + 1, 10));
-
-        return false;
-    }
-
-    function deleteNestedFormset(btn, classId, dataId) {
-        var prefix = $('.' + classId).data(dataId);
-        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val(), 10);
-
-        // We need at least one nested form
-        if (formCount > 1) {
-            $(btn).parents().parents().children('.' + classId + ':last').remove();
-            var forms = $('.' + classId);
-
-            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-            var ctr = 0;
-            for (formCount=forms.length; ctr < formCount; ctr++) {
-                $(forms.get(ctr)).children().each(function() {
-                    if ($(this).attr('type') == 'text')
-                        updateElementIndex(this, prefix, ctr);
-                });
-            }
+    $('form.custom').on('click', '.voting-add-nominee-button, .voting-add-pollrange-button', function(event) {
+        event.preventDefault();
+        var button_obj = $(event.currentTarget);
+        var formset_obj = button_obj.closest('.formset');
+        var block_obj = formset_obj.find('.copyblock').first();
+        var new_block_obj = block_obj.clone();
+        var prefix = formset_obj.data('prefix');
+        var total_forms_obj = formset_obj.parent().children('#id_' + prefix + '-TOTAL_FORMS');
+        var append_after_obj = block_obj;
+        if (block_obj.siblings('.copyblock').length > 0) {
+            append_after_obj = block_obj.siblings('.copyblock').last();
         }
-        return false;
-    }
 
-    // Register click events
-    $('#voting-add-poll-range-votes-button').click(function () {
-        var classId = 'pollrangevotesblock';
-        var dataId = 'nominee';
-        return addNestedForm(this, classId, dataId);
+        function attr_update(selector, attr, prepend){
+          new_block_obj.find(selector + prefix + "]").each(function (index, item) {
+              var item_obj = $(item);
+              var prologue_length = 2+prepend.length+prefix.length+total_forms_obj.val().length;
+              var item_id = item_obj.attr(attr).substr(prologue_length);
+              var dash = item_obj.attr(attr).substr(prologue_length-1, 1);
+              newid = prepend + prefix + '-' + total_forms_obj.val() + dash + item_id;
+              item_obj.attr(attr, newid);
+          });
+        }
+        attr_update('[id*=id_', 'id', 'id_');
+        attr_update('[name*=', 'name', '');
+        attr_update('[data-prefix*=', 'data-prefix', '');
+
+        new_block_obj.insertAfter(append_after_obj);
+
+        // Cleanup
+        new_block_obj.find('input,select,textarea,label').each(function (index, item) {
+            var item_obj = $(item);
+            if (item_obj.is('input:hidden')) {
+                return;
+            }
+            if (item_obj.is('input:checkbox') || item_obj.is('input:radio')) {
+                item_obj.attr('checked', false);
+            } else if (item_obj.is('select')) {
+                item_obj.val($('options:first', item_obj).val());
+                item_obj.trigger('change');
+            } else {
+                item_obj.val('');
+            }
+        });
+
+        total_forms_obj.val(parseInt(total_forms_obj.val(), 10) + 1);
     });
 
-    $('#voting-add-poll-radio-choices-button').click(function () {
-        var classId = 'pollradiochoicesblock';
-        var dataId = 'choice';
-        return addNestedForm(this, classId, dataId);
-    });
+    // $('.pollrangeblock').each(function(item) {
+    //     prefix = 'pollrange_set';
+    //     button = $(this).parent().parent().find('#voting-add-pollrange-button');
+    //     $('.pollrangeblock').formset({
+    //         formCssClass: 'pollrangeblock',
+    //         prefix: prefix,
+    //         addBtnObj: button,
+    //         fcallback: uu,
+    //         addDeleteButton: null
+    //     });
+    // });
 
-    $('#voting-delete-poll-range-votes-button').click(function () {
-        var classId = 'pollrangevotesblock';
-        var dataId = 'nominee';
-        return deleteNestedFormset(this, classId, dataId);
-    });
-
-    $('#voting-delete-poll-radio-choices-button').click(function () {
-        var classId = 'pollradiochoicesblock';
-        var dataId = 'choice';
-       return deleteNestedFormset(this, classId, dataId);
-    });
+    // // Register click events
+    // $('#voting-add-poll-range-votes-button').click(function () {
+    //     var classId = 'pollrangevotesblock';
+    //     var dataId = 'nominee';
+    //     return addNestedForm(this, classId, dataId);
+    // });
 
     // Move foundation elements to position.
     ['start', 'end'].forEach(function(obj) {

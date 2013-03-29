@@ -6,17 +6,17 @@
                 var f = c + '-' + d;
                 if (a(b).attr('for')) a(b).attr('for', a(b).attr('for').replace(e, f));
                 if (b.id) b.id = b.id.replace(e, f);
-                if (b.name) b.name = b.name.replace(e, f)
+                if (b.name) b.name = b.name.replace(e, f);
             };
         a(this).each(function (b) {
             a(this).addClass(c.formCssClass);
             if (c.addDeleteButton) {
                 if (a(this).is('TR')) {
-                    a(this).children(':last').append('<a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a>')
+                    a(this).children(':last').append('<a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a>');
                 } else if (a(this).is('UL') || a(this).is('OL')) {
-                    a(this).append('<li><a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a></li>')
+                    a(this).append('<li><a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a></li>');
                 } else {
-                    a(this).append('<a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a>')
+                    a(this).append('<a class="' + c.deleteCssClass + '" href="javascript:void(0)">' + c.deleteText + '</a>');
                 }
             }
             a(this).find('a.' + c.deleteCssClass).click(function () {
@@ -26,55 +26,64 @@
                 var e = a('.' + c.formCssClass);
                 a('#id_' + c.prefix + '-TOTAL_FORMS').val(e.length);
                 if (e.length == 1) {
-                    a('a.' + c.deleteCssClass).hide()
+                    a('a.' + c.deleteCssClass).hide();
                 }
                 for (var f = 0, g = e.length; f < g; f++) {
                     a(e.get(f)).find('input,select,textarea,label').each(function () {
-                        d(this, c.prefix, f)
-                    })
+                        d(this, c.prefix, f);
+                    });
                 }
-                return false
-            })
+                return false;
+            });
         });
         if (a(this).length) {
             if (c.addBtnObj) {
-                $addBtn = c.addBtnObj
+                $addBtn = c.addBtnObj;
             } else {
                 if (a(this).attr('tagName') == 'TR') {
                     var e = this.eq(0).children().length;
                     a(this).parent().append('<tr><td colspan="' + e + '"><a class="' + c.addCssClass + '" href="javascript:void(0)">' + c.addText + '</a></tr>');
-                    $addBtn = a(this).parent().find('tr:last a')
+                    $addBtn = a(this).parent().find('tr:last a');
                 } else {
                     a(this).filter(':last').after('<a class="' + c.addCssClass + '" href="javascript:void(0)">' + c.addText + '</a>');
-                    $addBtn = a(this).filter(':last').next()
+                    $addBtn = a(this).filter(':last').next();
                 }
             }
             $addBtn.click(function () {
-                var b = parseInt(a('#id_' + c.prefix + '-TOTAL_FORMS').val());
-                var e = a('.' + c.formCssClass + ':first').clone(true).get(0);
-                a(e).removeAttr('id').insertAfter(a('.' + c.formCssClass + ':last'));
+                var b = parseInt(a('#id_' + c.prefix + '-TOTAL_FORMS').val(), 10);
+                var e = parent_obj.children('.' + c.formCssClass + ':first').clone(true).get(0);
+                a(e).removeAttr('id').insertAfter(parent_obj.children('.' + c.formCssClass).last());
                 a(e).find('input,select,textarea,label').each(function () {
                     d(this, c.prefix, b);
                     var e = a(this);
+                    if (e.is('input:hidden')) {
+                        return;
+                    }
                     if (e.is('input:checkbox') || e.is('input:radio')) {
-                        e.attr('checked', false)
+                        e.attr('checked', false);
+                    } else if (e.is('select')) {
+                        e.val(jQuery('options:first', e).val());
+                        e.trigger('change');
                     } else {
-                        e.val('')
+                        e.val('');
                     }
                 });
                 var f = b + 1;
-                a('#id_' + c.prefix + '-TOTAL_FORMS').val(f);
+                parent_obj.children('#id_' + c.prefix + '-TOTAL_FORMS').val(f);
+                if (c.fcallback) {
+                    c.fcallback(e);
+                }
                 if (f > 1) {
-                    a('a.' + c.deleteCssClass).show()
+                    a('a.' + c.deleteCssClass).show();
                 }
                 if (c.added) c.added(a(e));
-                return false
-            })
+                return false;
+            });
         }
         if (a(this).length == 1) {
-            a('a.' + c.deleteCssClass).hide()
+            a('a.' + c.deleteCssClass).hide();
         }
-        return a(this)
+        return a(this);
     };
     a.fn.formset.defaults = {
         prefix: 'form',
@@ -86,6 +95,7 @@
         added: null,
         removed: null,
         addBtnObj: null,
+        fcallback: null,
         addDeleteButton: true
-    }
-})(jQuery)
+    };
+})(jQuery);
