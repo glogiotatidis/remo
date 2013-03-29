@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('form.custom').on('click', '.voting-add-nominee-button, .voting-add-pollrange-button', function(event) {
+    $('form.custom').on('click', '.voting-add-answer-button, .voting-add-pollradio-button, .voting-add-nominee-button, .voting-add-pollrange-button', function(event) {
         event.preventDefault();
         var button_obj = $(event.currentTarget);
         var formset_obj = button_obj.closest('.formset');
@@ -46,25 +46,6 @@ $(document).ready(function() {
 
         total_forms_obj.val(parseInt(total_forms_obj.val(), 10) + 1);
     });
-
-    // $('.pollrangeblock').each(function(item) {
-    //     prefix = 'pollrange_set';
-    //     button = $(this).parent().parent().find('#voting-add-pollrange-button');
-    //     $('.pollrangeblock').formset({
-    //         formCssClass: 'pollrangeblock',
-    //         prefix: prefix,
-    //         addBtnObj: button,
-    //         fcallback: uu,
-    //         addDeleteButton: null
-    //     });
-    // });
-
-    // // Register click events
-    // $('#voting-add-poll-range-votes-button').click(function () {
-    //     var classId = 'pollrangevotesblock';
-    //     var dataId = 'nominee';
-    //     return addNestedForm(this, classId, dataId);
-    // });
 
     // Move foundation elements to position.
     ['start', 'end'].forEach(function(obj) {

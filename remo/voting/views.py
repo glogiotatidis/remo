@@ -51,7 +51,7 @@ def edit_voting(request, slug=None):
         and poll_radio_formset.is_valid()):
         poll_form.save()
         poll_range_formset.save_all()
-        #poll_radio_formset.save_all()
+        poll_radio_formset.save_all()
 
         if created:
             messages.success(request, 'Voting successfully created.')

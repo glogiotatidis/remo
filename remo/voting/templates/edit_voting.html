@@ -53,16 +53,14 @@
           <!-- Poll range voting -->
           <div class="formset" data-prefix="{{ poll_range_formset.prefix }}">
             {% for poll_range_form in poll_range_formset %}
-                {{ poll_range_form.id }}
+              {{ poll_range_form.id }}
               <div class="row copyblock">
                 {{ field_with_attrs(poll_range_form.name,
                                     placeholder='Range Poll Name',
                                     title='Range Poll Name',
                                     class='input-text big has-tip tip-right') }}
-                {{ field_errors(poll_range_form.name) }}
                 <div class="required-field"></div>
-
-
+                {{ field_errors(poll_range_form.name) }}
                 {% if poll_range_form.nested %}
                   <div class="formset" data-prefix="{{ poll_range_form.nested[0].prefix }}">
                     {% for nominee_form in poll_range_form.nested[0] %}
@@ -72,8 +70,8 @@
                       </div>
                     {% endfor %}
                     <div class="align-left">
-                      <a class="voting-add-nominee-button" href="#"
-                         class="small white button nice radius">Add Nominee
+                      <a class="small white button nice radius voting-add-nominee-button"
+                         href="#">  Add Nominee
                       </a>
                     </div>
                   </div>
@@ -82,8 +80,8 @@
               </div>
             {% endfor %}
             <div class="align-left">
-              <a class="voting-add-pollrange-button" href="#"
-                 class="small white button nice radius">Add Poll Range
+              <a class="voting-add-pollrange-button small white button nice radius"
+                 href="#">Add Poll Range
               </a>
             </div>
           </div>
@@ -91,49 +89,42 @@
 
 
 
-
-
-
-          <!-- Poll radio voting -->
-          <div id="pollradioformset">
-            {% for poll_radio in poll_radio_formset.forms %}
-              <div class="row pollradioblock"
-                   id="{{ poll_radio.prefix }}-row">
-                {{ field_with_attrs(poll_radio.title,
+          <div class="formset" data-prefix="{{ poll_radio_formset.prefix }}">
+            {% for poll_radio_form in poll_radio_formset %}
+              {{ poll_radio_form.id }}
+              <div class="row copyblock">
+                {{ field_with_attrs(poll_radio_form.title,
                                     placeholder='Radio Poll Title',
                                     title='Radio Poll Title',
-                                    class='input-text big has-tip tip-right') }}
+                                    class='input-text big has-tip tip-left') }}
                 <div class="required-field"></div>
-                {{ field_errors(poll_radio.title) }}
-                {% if poll_radio.nested %}
-                  {% for formset in poll_radio.nested %}
-                    <div class="pollradiochoicesblock"
-                         data-choice={{ formset.prefix }}>
-                      {{ formset.management_form }}
-                      {% for form in formset.forms %}
-                        {{ form.id }}
-                        {{ field_with_attrs(form.answer,
-                                            placeholder='Poll Radio Answer',
-                                            title='Poll Radio Answer',
-                                            class='input-text big has-tip tip-right') }}
-                        {% if loop.first %}
-                          <div class="required-field"></div>
-                        {% endif %}
-                      {% endfor %}
+                {{ field_errors(poll_radio_form.title) }}
+                {% if poll_radio_form.nested %}
+                  <div class="formset" data-prefix="{{ poll_radio_form.nested[0].prefix }}">
+                    {% for answer_form in poll_radio_form.nested[0] %}
+                      {{ answer_form.id }}
+                      <div class="row copyblock">
+                        {{ field_with_attrs(answer_form.answer,
+                                            placeholder='Radio Poll Answer',
+                                            title='Radio Poll Answer',
+                                            class='input-text big has-tip tip-left') }}
+                      </div>
+                    {% endfor %}
+                    <div class="align-left">
+                      <a class="voting-add-answer-button small white button nice radius"
+                         href="#"> Add Answer
+                      </a>
                     </div>
-                  {% endfor %}
-                  <div class="align-left">
-                    <a id="voting-add-poll-radio-choices-button" href="#"
-                       class="small white button nice radius">Add Choice
-                    </a>
-                    <a id="voting-delete-poll-radio-choices-button" href="#"
-                       class="small white button nice radius" >Delete Answer
-                    </a>
-                 </div>
+                  </div>
+                  {{ poll_radio_form.nested[0].management_form }}
                 {% endif %}
-                </br>
               </div>
             {% endfor %}
+            <div class="align-left">
+              <a class="voting-add-pollradio-button small white button nice radius"
+                 href="#"> Add Poll Radio
+              </a>
+            </div>
           </div>
           {{ poll_radio_formset.management_form }}
 

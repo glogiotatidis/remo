@@ -228,13 +228,13 @@ class BasePollRadioInlineFormSet(BaseInlineFormSet):
             pk_value = instance.pk
         except IndexError:
             instance = None
-            pk_value = hash(form.prefix)
+            pk_value = form.prefix
 
         data = self.data if self.data and index is not None else None
         # store the formset in the .nested property
         form.nested = [PollChoicesFormset(
             data=data, instance=instance,
-            prefix='RADIO_CHOICES_%s' % pk_value)]
+            prefix='%s_radio_choices' % pk_value)]
 
     def is_valid(self):
         result = super(BasePollRadioInlineFormSet, self).is_valid()
