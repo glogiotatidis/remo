@@ -89,12 +89,10 @@ MINIFY_BUNDLES = {
             'js/remo/profiles_people.js'
             ),
         'reports_edit_report': (
-            'js/libs/jquery.formset.js',
-            'js/remo/reports_edit_report.js'
+            'js/remo/reports_edit_report.js',
             ),
         'events_edit_event': (
-            'js/libs/jquery.formset.js',
-            'js/remo/events_edit_event.js'
+            'js/remo/events_edit_event.js',
             ),
         'events_view_event': (
             'js/libs/jquery.zflickrfeed.js',
