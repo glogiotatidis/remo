@@ -44,7 +44,7 @@ class Vote(models.Model):
 class RangePoll(models.Model):
     """Range Poll Model."""
     name = models.CharField(max_length=500, default='')
-    poll = models.ForeignKey(Poll)
+    poll = models.ForeignKey(Poll, related_name='range_polls')
 
     def __unicode__(self):
         return self.name
@@ -53,7 +53,7 @@ class RangePoll(models.Model):
 class RangePollChoice(models.Model):
     """Range Poll Choice Model."""
     votes = models.IntegerField(default=0)
-    range_poll = models.ForeignKey(RangePoll)
+    range_poll = models.ForeignKey(RangePoll, related_name='choices')
     nominee = models.ForeignKey(User)
 
     class Meta:
@@ -63,7 +63,7 @@ class RangePollChoice(models.Model):
 class RadioPoll(models.Model):
     """Radio Poll Model."""
     question = models.CharField(max_length=500)
-    poll = models.ForeignKey(Poll)
+    poll = models.ForeignKey(Poll, related_name='radio_polls')
 
     def __unicode__(self):
         return self.question
@@ -73,7 +73,7 @@ class RadioPollChoice(models.Model):
     """Radio Poll Choice Model."""
     answer = models.CharField(max_length=500)
     votes = models.IntegerField(default=0)
-    radio_poll = models.ForeignKey(RadioPoll)
+    radio_poll = models.ForeignKey(RadioPoll, related_name='answers')
 
     def __unicode__(self):
         return self.answer

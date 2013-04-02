@@ -99,57 +99,53 @@ View Voting
           {{ poll.description }}
         </p>
         <!-- Poll Range Section -->
-        {% if range_poll_choice %}
           <!-- Poll Range Title -->
-          {% for range_poll, choices in range_poll_choice.items() %}
-            <p class="profile-item">
-              <span class="white radius label">
-                Range voting title
-              </span>
-              &nbsp;
-              {{ range_poll.name }}
-            </p>
-            <!-- Results -->
-            <p class="profile-item">
-              <span class="white radius label">
-                Range voting results
-              </span>
-              &nbsp;
-              {% for choice in choices %}
-                <p class="profile-item">
-                  {{ choice.nominee.get_full_name() }}
-                  {{ choice.votes }}
-                </p>
-              {% endfor %}
+        {% for range_poll in poll.range_polls.all() %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Range voting title
+            </span>
+            &nbsp;
+            {{ range_poll.name }}
+          </p>
+          <!-- Results -->
+          <p class="profile-item">
+            <span class="white radius label">
+              Range voting results
+            </span>
+            &nbsp;
+            {% for choice in range_poll.choices.all() %}
+              <p class="profile-item">
+                {{ choice.nominee.get_full_name() }}
+                {{ choice.votes }}
               </p>
-          {% endfor %}
-        {% endif %}
+            {% endfor %}
+            </p>
+        {% endfor %}
         <!-- Radio Poll Section -->
-        {% if radio_poll_choice %}
         <!--Range Poll Title -->
-          {% for radio_poll, choices in radio_poll_choice.items() %}
-            <p class="profile-item">
-              <span class="white radius label">
-                Radio voting title
-              </span>
-              &nbsp;
-              {{ radio_poll.question }}
-            </p>
-            <!-- Results -->
-            <p class="profile-item">
-              <span class="white radius label">
-                Radio voting results
-              </span>
-              &nbsp;
-              {% for choice in choices %}
-                <p class="profile-item">
-                  {{ choice.answer }} 
-                  {{ choice.votes }}
-                </p>
-              {% endfor %}
-            </p>
-          {% endfor %}
-        {% endif %}
+        {% for radio_poll in poll.radio_polls.all() %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Radio voting title
+            </span>
+            &nbsp;
+            {{ radio_poll.question }}
+          </p>
+          <!-- Results -->
+          <p class="profile-item">
+            <span class="white radius label">
+              Radio voting results
+            </span>
+            &nbsp;
+            {% for choice in radio_poll.answers.all() %}
+              <p class="profile-item">
+                {{ choice.answer }}
+                {{ choice.votes }}
+              </p>
+            {% endfor %}
+          </p>
+        {% endfor %}
       </div>
     </div>
 
