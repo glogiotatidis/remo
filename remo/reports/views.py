@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
@@ -12,8 +13,11 @@ from django.views.decorators.cache import cache_control, never_cache
 import forms
 import remo.base.utils as utils
 from remo.base.decorators import permission_check
+from remo.events.helpers import get_attendee_role_event
+from remo.events.models import Event
 from remo.profiles.models import UserProfile
 from models import Report, ReportComment
+from utils import participation_type_to_number
 
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
 LIST_REPORTS_VALID_SHORTS = {
@@ -186,8 +190,25 @@ def edit_report(request, display_name, year, month):
                                             'year': year,
                                             'month': month}))
     else:
+        data = {}
+        if created:
+            events = Event.objects.filter(start__year=year_month.year,
+                                          start__month=year_month.month)
+            for i, event in enumerate(events):
+                e_url = reverse('events_view_event',
+                                kwargs={'slug': event.slug})
+                p_type = participation_type_to_number(
+                    get_attendee_role_event(user, event))
+                data['reportevent_set-%d-name' % i] = event.name
+                data['reportevent_set-%d-description' % i] = event.description
+                data['reportevent_set-%d-link' % i] = settings.SITE_URL + e_url
+                data['reportevent_set-%d-participation_type' % i] = p_type
+                data['reportevent_set-INITIAL_FORMS'] = 0
+                data['reportevent_set-TOTAL_FORMS'] = len(events) + 1
+
         report_form = forms.ReportForm(instance=report)
-        report_event_formset = forms.ReportEventFormset(instance=report)
+        report_event_formset = forms.ReportEventFormset(instance=report,
+                                                        data=data or None)
         report_link_formset = forms.ReportLinkFormset(instance=report)
 
     return render(request, 'edit_report.html',
