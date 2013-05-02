@@ -190,25 +190,22 @@ def edit_report(request, display_name, year, month):
                                             'year': year,
                                             'month': month}))
     else:
-        data = {}
         if created:
             events = Event.objects.filter(start__year=year_month.year,
-                                          start__month=year_month.month)
-            for i, event in enumerate(events):
-                e_url = reverse('events_view_event',
-                                kwargs={'slug': event.slug})
-                p_type = participation_type_to_number(
+                                          start__month=year_month.month,
+                                          owner=user)
+            initial = []
+            for event in events:
+                participation_type = participation_type_to_number(
                     get_attendee_role_event(user, event))
-                data['reportevent_set-%d-name' % i] = event.name
-                data['reportevent_set-%d-description' % i] = event.description
-                data['reportevent_set-%d-link' % i] = settings.SITE_URL + e_url
-                data['reportevent_set-%d-participation_type' % i] = p_type
-                data['reportevent_set-INITIAL_FORMS'] = 0
-                data['reportevent_set-TOTAL_FORMS'] = len(events) + 1
+                initial.append({'name':event.name,
+                                'description':event.description,
+                                'link':settings.SITE_URL + event.slug,
+                                'participation_type':participation_type})
 
         report_form = forms.ReportForm(instance=report)
         report_event_formset = forms.ReportEventFormset(instance=report,
-                                                        data=data or None)
+                                                        initial=initial)
         report_link_formset = forms.ReportLinkFormset(instance=report)
 
     return render(request, 'edit_report.html',
