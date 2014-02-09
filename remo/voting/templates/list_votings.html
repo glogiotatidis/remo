@@ -15,8 +15,9 @@
       </div>
     {% endif %}
   </div>
-
-  {% macro display_polls(polls, show_pagination) -%}
+  
+  <div id="row">
+    {% macro display_polls(polls, show_pagination) -%}
     <div class="large-12 columns">
       <table class="dashboard-table">
         <thead>
@@ -26,12 +27,13 @@
             <th class="dashboard-clickable type-string">End Date</th>
             <th class="dashboard-clickable type-string">Eligible Groups</th>
             <th class="dashboard-clickable type-string align-center">Voted</th>
+	    <th class="dashboard-clickable type-string align-center">Progress Bar</th>
           </tr>
         </thead>
         <tbody>
           {% for poll in polls %}
-            <tr>
-              <td>
+          <tr>
+            <td>
                 <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
                   {{ poll.name }}
                 </a>
@@ -46,7 +48,14 @@
               </td>
               <td>{{ poll.valid_groups }}</td>
               <td class="align-center">{{ poll|get_users_voted }}</td>
-            </tr>
+	      <td>
+		<meter min="0" optimum="0.85" value="{{ poll|get_users_voted/poll|get_voters_per_group }}" max="1" high="0.8">
+		  <div class="progressbar">
+		    <span class="progressspan" style="width: {{ poll|get_users_voted/poll|get_voters_per_group*100 }}%;"></span>
+		  </div>
+		</meter>
+	      </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -151,5 +160,6 @@
   {% compress js %}
     <script src="{{ static('base/js/stupidtable.js') }}"></script>
     <script src="{{ static('voting/js/voting_list.js') }}"></script>
+    <script src="{{ static('voting/js/progress.js') }}"></script>
   {% endcompress %}
 {% endblock %}
