@@ -249,8 +249,10 @@ Mozilla Reps - {{ poll.name }} - Vote
                     </div>
                   {% endfor %}
                   <div id="report-comment-post">
-                   <textarea name="comment" class="flat"
-                             placeholder="Add comment for this poll"></textarea>
+                    {{ field_with_attrs(poll_comment_form.comment,
+                                        class="flat",
+                                        placeholder="Add comment to this poll") }}
+                    {{ field_errors(poll_comment_form.comment) }}
                   </div>
                 </div>
               </div>
